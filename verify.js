@@ -73,13 +73,18 @@ verify.fileWithNameExists = function(fp) {
     return fs.existsSync(fp)
   }
   var f = fp+'.js'
-  if (!fs.existsSync(f)) {
-    f = fp+'.json'
-    if (!fs.existsSync(f)) {
-      return false
-    }
-  }
-  return true
+  if (fs.existsSync(f)) return true
+  
+  f = fp+'.json'
+  if (fs.existsSync(f)) return true
+  
+  f = path.join(fp, 'index.js')
+  if (fs.existsSync(f)) return true
+  
+  f = path.join(fp, 'lib', 'index.js')
+  if (fs.existsSync(f)) return true
+  
+  return false
 }
 
 
