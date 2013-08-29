@@ -85,14 +85,21 @@ verify.fileWithNameExists = function(fp) {
 
 verify.processForDir = function(dir, cb) {
   var self = this
-  self.readFiles(function(err, modules, relativeModules) {
-    if (err) return cb && cb(err)
-    var pkg = require(path.join(cwd, 'package.json'))
-    var deps = pkg.dependencies
-      , devDeps = pkg.devDependencies || {}
-    var output = {};
-    output.modules = modules
-    output.relativeModules = relativeModules
-    return cb && cb(null, output)
+  fs.exists(path.join(dir, 'package.json'), function(e) {
+    if (!e) {
+      logger.error('Unable to find package.json')
+      process.exit(1)
+    } else {
+      self.readFiles(function(err, modules, relativeModules) {
+        if (err) return cb && cb(err)
+        var pkg = require(path.join(cwd, 'package.json'))
+        var deps = pkg.dependencies
+          , devDeps = pkg.devDependencies || {}
+        var output = {};
+        output.modules = modules
+        output.relativeModules = relativeModules
+        return cb && cb(null, output)
+      })  
+    }
   })
 }
