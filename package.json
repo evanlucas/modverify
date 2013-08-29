@@ -1,0 +1,30 @@
+{
+  "name": "modverify",
+  "version": "0.0.1",
+  "description": "Verifies that all modules that are used in the given directory are actually registered in the package's dependencies",
+  "main": "verify.js",
+  "bin": {
+    "modverify": "./bin/verify.js"
+  },
+  "dependencies": {
+    "async": "~0.2.9",
+    "event-stream": "~3.0.16",
+    "grunt": "~0.4.1",
+    "grunt-cafe-mocha": "~0.1.8",
+    "loggerjs": "git+https://gitlab.com/evanlucas/loggerjs.git",
+    "readdirp": "~0.3.1",
+    "tap-stream": "~0.2.0",
+    "underscore": "~1.5.1"
+  },
+  "devDependencies": {
+    "grunt-cafe-mocha": "~0.1.8",
+    "grunt": "~0.4.1",
+    "should": "~1.2.2"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "repository": "",
+  "author": "Evan Lucas",
+  "license": "BSD"
+}
