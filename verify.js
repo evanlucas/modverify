@@ -44,7 +44,7 @@ verify.processFile = function(f, cb) {
 verify.readFiles = function(cb) {
   var self = this
   readdirp({
-      directoryFilter: ['!.git', '!node_modules', '!components']
+      directoryFilter: ['!.git', '!node_modules', '!components', '!bower_components']
     , fileFilter: ['*.js']  
   }, function(err, res) {
     if (err) {
