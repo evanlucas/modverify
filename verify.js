@@ -41,12 +41,16 @@ verify.processFile = function(f, cb) {
   })
 }
 
-verify.readFiles = function(cb) {
+verify.readFiles = function(opts, cb) {
   var self = this
-  readdirp({
-      directoryFilter: ['!.git', '!node_modules', '!components', '!bower_components']
-    , fileFilter: ['*.js']  
-  }, function(err, res) {
+  if ('function' === typeof opts) {
+    cb = opts
+    opts = {
+        directoryFilter: ['!.git', '!node_modules', '!components', '!bower_components']
+      , fileFilter: ['*.js']
+    };
+  }
+  readdirp(opts, function(err, res) {
     if (err) {
       err.forEach(function(e) {
         logger.error('Error: ', e)
@@ -88,14 +92,27 @@ verify.fileWithNameExists = function(fp) {
 }
 
 
-verify.processForDir = function(dir, cb) {
+verify.processForDir = function(dir, opts, cb) {
   var self = this
+  if ('function' === typeof opts) {
+    cb = opts
+    opts = {
+        directoryFilter: ['!.git', '!node_modules', '!components', '!bower_components']
+      , fileFilter: ['*.js']
+    };
+  }
+  if (!opts.fileFilter) {
+    opts.fileFilter = ['*.js']
+  }
+  if (!opts.directoryFilter) {
+    opts.directoryFilter = ['!.git', '!node_modules', '!components', '!bower_components']
+  }
   fs.exists(path.join(dir, 'package.json'), function(e) {
     if (!e) {
       logger.error('Unable to find package.json')
       process.exit(1)
     } else {
-      self.readFiles(function(err, modules, relativeModules) {
+      self.readFiles(opts, function(err, modules, relativeModules) {
         if (err) return cb && cb(err)
         var pkg = require(path.join(cwd, 'package.json'))
         var deps = pkg.dependencies

@@ -6,7 +6,10 @@ var logger = require('loggerjs')('Verify')
   , path = require('path')
 
 
-verify.processForDir(cwd, function(err, results) {
+verify.processForDir(cwd, {
+    directoryFilter: ['!.git', '!components', '!bower_components', '!node_modules']
+  , fileFilter: ['*.js']
+}, function(err, results) {
   if (err) {
     logger.error('Error scanning files:', err)
     process.exit(1)
