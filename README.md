@@ -4,7 +4,7 @@ Verify that modules that you are requiring are registered in your `package.json`
 
 #### Install
 
-    npm install -g git+https://github.com/evanlucas/modverify.git
+    npm install -g modverify
 
 #### Usage
 
