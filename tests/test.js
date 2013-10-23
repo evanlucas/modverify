@@ -1,5 +1,4 @@
 var should = require('should')
-  , assert = require('assert')
 
 describe('modverify', function() {
   describe('fileWithNameExists', function() {
@@ -12,24 +11,24 @@ describe('modverify', function() {
       var fn = path.join(dir, 'testfiles', file)
       var res = verify.fileWithNameExists(fn)
       it('Should exist', function() {
-        assert.equal(res, true)
+        should.equal(res, true)
       })
     })
     files2.forEach(function(file) {
       var fn = path.join(dir, 'testfiles', file)
       var res = verify.fileWithNameExists(fn)
       it('Should not exist', function() {
-        assert.equal(res, false)
+        should.equal(res, false)
       })
     })
   })
-  
+
   describe('processForDir', function() {
     var dir = process.cwd()
       , verify = require('../verify')
     it('Should not throw an error', function(done) {
       verify.processForDir(dir, function(err, res) {
-        assert.ifError(err)
+        should.ifError(err)
         res.should.have.property('modules')
         res.should.have.property('relativeModules')
         done()
