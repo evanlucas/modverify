@@ -5,7 +5,10 @@ var fs = require('fs')
   , regex = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
   , regex2 = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
   , _ = require('underscore')
-  , defaultModules = ['child_process', 'assert', 'cluster', 'crypto', 'dns', 'domain', 'events', 'fs', 'http', 'https', 'net', 'os', 'path', 'querystring', 'repl', 'readline', 'stream', 'tls', 'punycode', 'string_decoder', 'dgram', 'url', 'util', 'vm', 'zlib']
+  , defaultModules = ['child_process', 'assert', 'cluster', 'crypto', 'dns',
+    'domain', 'events', 'fs', 'http', 'https', 'net', 'os', 'path', 
+    'querystring', 'repl', 'readline', 'stream', 'tls', 'punycode', 
+    'string_decoder', 'dgram', 'url', 'util', 'vm', 'zlib']
   , async = require('async')
   , path = require('path')
   , verify = exports
@@ -46,7 +49,8 @@ verify.readFiles = function(opts, cb) {
   if ('function' === typeof opts) {
     cb = opts
     opts = {
-        directoryFilter: ['!.git', '!node_modules', '!components', '!bower_components']
+        directoryFilter: ['!.git', '!node_modules', 
+          '!components', '!bower_components']
       , fileFilter: ['*.js']
     };
   }
@@ -97,7 +101,8 @@ verify.processForDir = function(dir, opts, cb) {
   if ('function' === typeof opts) {
     cb = opts
     opts = {
-        directoryFilter: ['!.git', '!node_modules', '!components', '!bower_components']
+        directoryFilter: ['!.git', '!node_modules', 
+          '!components', '!bower_components']
       , fileFilter: ['*.js']
     };
   }
@@ -105,7 +110,8 @@ verify.processForDir = function(dir, opts, cb) {
     opts.fileFilter = ['*.js']
   }
   if (!opts.directoryFilter) {
-    opts.directoryFilter = ['!.git', '!node_modules', '!components', '!bower_components']
+    opts.directoryFilter = ['!.git', '!node_modules', 
+      '!components', '!bower_components']
   }
   fs.exists(path.join(dir, 'package.json'), function(e) {
     if (!e) {

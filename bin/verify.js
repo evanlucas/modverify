@@ -7,7 +7,8 @@ var logger = require('loggerjs')('Verify')
 
 
 verify.processForDir(cwd, {
-    directoryFilter: ['!.git', '!components', '!bower_components', '!node_modules']
+    directoryFilter: ['!.git', '!components', 
+      '!bower_components', '!node_modules']
   , fileFilter: ['*.js']
 }, function(err, results) {
   if (err) {
