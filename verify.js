@@ -7,8 +7,8 @@ var fs       = require('fs')
   , _        = require('underscore')
   , async    = require('async')
   , path     = require('path')
+  , winston  = require('winston')
   , verify   = exports
-
 
 var defaultModules = [
     'child_process'
@@ -40,6 +40,12 @@ var defaultModules = [
 
 var nodeModules = []
 var relativeModules = {}
+
+verify.log = new (winston).Logger({
+  transports: [
+    new winston.transports.Console({ colorize: true, level: 'verbose' })
+  ]
+})
 
 verify.processFile = function(f, cb) {
   f = f.fullPath
@@ -82,14 +88,14 @@ verify.readFiles = function(opts, cb) {
   readdirp(opts, function(err, res) {
     if (err) {
       err.forEach(function(e) {
-        logger.error('Error: ', e)
+        self.log.error('Error: ', e)
       })
       return cb && cb(err)
     } else {
       var processFile = self.processFile
       async.each(res.files, processFile, function(err) {
         if (err) {
-          logger.error('Error processing files: ', err)
+          self.log.error('Error processing files: ', err)
           return cb && cb(err)
         } else {
           nodeModules = _.difference(nodeModules, defaultModules)
@@ -140,7 +146,7 @@ verify.processForDir = function(dir, opts, cb) {
   }
   fs.exists(path.join(dir, 'package.json'), function(e) {
     if (!e) {
-      logger.error('Unable to find package.json')
+      self.log.error('Unable to find package.json')
       process.exit(1)
     } else {
       self.readFiles(opts, function(err, modules, relativeModules) {
