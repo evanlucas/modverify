@@ -9,7 +9,6 @@
   "dependencies": {
     "async": "~0.2.9",
     "event-stream": "~3.0.16",
-    "loggerjs": "git+https://gitlab.com/evanlucas/loggerjs.git",
     "readdirp": "~0.3.1",
     "underscore": "~1.5.1",
     "winston": "~0.7.2"
