@@ -1,17 +1,42 @@
-var fs = require('fs')
-  , cwd = process.cwd()
+var fs       = require('fs')
+  , cwd      = process.cwd()
   , readdirp = require('readdirp')
-  , logger = require('loggerjs')('modverify')
-  , regex = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
-  , regex2 = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
-  , _ = require('underscore')
-  , defaultModules = ['child_process', 'assert', 'cluster', 'crypto', 'dns',
-    'domain', 'events', 'fs', 'http', 'https', 'net', 'os', 'path', 
-    'querystring', 'repl', 'readline', 'stream', 'tls', 'punycode', 
-    'string_decoder', 'dgram', 'url', 'util', 'vm', 'zlib']
-  , async = require('async')
-  , path = require('path')
-  , verify = exports
+  , logger   = require('loggerjs')('modverify')
+  , regex    = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
+  , regex2   = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
+  , _        = require('underscore')
+  , async    = require('async')
+  , path     = require('path')
+  , verify   = exports
+
+
+var defaultModules = [
+    'child_process'
+  , 'assert'
+  , 'cluster'
+  , 'crypto'
+  , 'dns'
+  , 'domain'
+  , 'events'
+  , 'fs'
+  , 'http'
+  , 'https'
+  , 'net'
+  , 'os'
+  , 'path'
+  , 'querystring'
+  , 'repl'
+  , 'readline'
+  , 'stream'
+  , 'tls'
+  , 'punycode'
+  , 'string_decoder'
+  , 'dgram'
+  , 'url'
+  , 'util'
+  , 'vm'
+  , 'zlib'
+]
 
 var nodeModules = []
 var relativeModules = {}
