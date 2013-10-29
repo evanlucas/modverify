@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-var logger = require('loggerjs')('Verify')
-  , cwd = process.cwd()
-  , fs = require('fs')
+var cwd    = process.cwd()
+  , fs     = require('fs')
   , verify = require('../verify')
-  , path = require('path')
+  , path   = require('path')
 
 
 verify.processForDir(cwd, {
