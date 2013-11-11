@@ -11,7 +11,8 @@
     "event-stream": "~3.0.16",
     "readdirp": "~0.3.1",
     "underscore": "~1.5.1",
-    "winston": "~0.7.2"
+    "npmlog": "0.0.6",
+    "colors": "~0.6.2"
   },
   "devDependencies": {
     "grunt-cafe-mocha": "~0.1.8",
