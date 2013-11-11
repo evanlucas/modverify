@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         src: 'tests/test.js',
         options: {
           ui: 'bdd',
-          reporter: 'nyan',
+          reporter: grunt.option('reporter') || 'nyan',
           colors: true
         }
       }
