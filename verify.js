@@ -1,16 +1,15 @@
-var fs       = require('fs')
-  , cwd      = process.cwd()
-  , readdirp = require('readdirp')
-  , logger   = require('loggerjs')('modverify')
-  , regex    = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
-  , regex2   = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
-  , _        = require('underscore')
-  , async    = require('async')
-  , path     = require('path')
-  , winston  = require('winston')
-  , verify   = exports
+var fs          = require('fs')
+  , cwd         = process.cwd()
+  , readdirp    = require('readdirp')
+  , colors      = require('colors')
+  , regex       = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
+  , regex2      = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
+  , _           = require('underscore')
+  , async       = require('async')
+  , path        = require('path')
+  , verify      = exports
 
-var defaultModules = [
+defaultModules = [
     'child_process'
   , 'assert'
   , 'cluster'
@@ -38,25 +37,40 @@ var defaultModules = [
   , 'zlib'
 ]
 
-var nodeModules = []
-var relativeModules = {}
+nodeModules = []
+relativeModules = {}
 
-verify.log = new (winston).Logger({
-  transports: [
-    new winston.transports.Console({ colorize: true, level: 'verbose' })
-  ]
-})
+verify.log = require('npmlog')
+verify.log.heading = 'modverify'
 
 verify.processFile = function(f, cb) {
   f = f.fullPath
   var e = fs.createReadStream(f)
+  var withinComment = false
+    , commentStart = {}
+  verify.log.verbose('processFile', 'checking', '`'+f+'`')
   e.on('data', function(chunk) {
     chunk = chunk.toString()
     var lines = chunk.split("\n")
-    lines.forEach(function(line) {
+    lines.forEach(function(line, idx) {
       if (line === "" || !line) return
+      if (~line.substr(0, 10).indexOf('//')) return
+      if (~line.indexOf('/*')) {
+        withinComment = true
+        commentStart.character = line.indexOf('/*')
+        commentStart.line = idx
+      }
+      
+      if (~line.indexOf('*/')) {
+        withinComment = false
+        commentStart = {};
+      }
+      
       if (matches = line.match(regex)) {
         var req = matches[3]
+        if (withinComment) {
+          return
+        }
         nodeModules.push(req)
       }
       if (matches2 = line.match(regex2)) {
