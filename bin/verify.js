@@ -4,6 +4,7 @@ var cwd    = process.cwd()
   , verify = require('../verify')
   , path   = require('path')
 
+verify.log.level = 'verbose'
 
 verify.processForDir(cwd, {
     directoryFilter: ['!.git', '!components', 
@@ -11,7 +12,7 @@ verify.processForDir(cwd, {
   , fileFilter: ['*.js']
 }, function(err, results) {
   if (err) {
-    logger.error('Error scanning files:', err)
+    verify.log.error('processing', 'Error scanning files:', err)
     process.exit(1)
   } else {
     var pkg = require(path.join(cwd, 'package.json'))
@@ -19,20 +20,18 @@ verify.processForDir(cwd, {
       , devDeps = pkg.devDependencies || {}
       , modules = results.modules
       , relativeModules = results.relativeModules
-    console.log()
-    logger.info('Checking dependencies')
+    verify.log.info('processing', 'Checking dependencies')
     modules.forEach(function(mod) {
       if (deps.hasOwnProperty(mod)) {
-        console.log(mod.cyan, 'is registered as a dependency')
+        verify.log.info('dependency', mod.cyan, 'is registered as a dependency')
       } else if (devDeps.hasOwnProperty(mod)) {
-        console.log(mod.magenta, 'is registered as a dev dependency')
+        verify.log.info('dependency', mod.magenta, 'is registered as a dev dependency')
       } else {
-        console.log(mod.red, 'IS NOT registered as a dependency')
+        verify.log.error('dependency', mod.red, 'IS NOT registered as a dependency')
       }
     })
     
-    console.log()
-    logger.info('Checking relative dependencies')
+    verify.log.info('Checking relative dependencies')
     var keys = Object.keys(relativeModules)
     keys.forEach(function(key) {
       if (!verify.fileWithNameExists(key)) {
