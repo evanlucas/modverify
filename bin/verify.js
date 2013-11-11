@@ -28,14 +28,16 @@ verify.processForDir(cwd, {
       , optDeps = pkg.optionalDependencies || {}
       , modules = results.modules
       , relativeModules = results.relativeModules
-    verify.log.info('processing', 'Checking dependencies')
+    verify.log.info('Checking dependencies')
     modules.forEach(function(mod) {
       if (deps.hasOwnProperty(mod)) {
-        verify.log.info('dependency', mod.cyan, 'is registered as a dependency')
+        verify.log.info('dependency', 'registered    ', mod.cyan)
       } else if (devDeps.hasOwnProperty(mod)) {
-        verify.log.info('dependency', mod.magenta, 'is registered as a dev dependency')
+        verify.log.info('dependency', 'registered    ', mod.yellow)
+      } else if (optDeps.hasOwnProperty(mod)) {
+        verify.log.info('dependency', 'registered    ', mod.grey)
       } else {
-        verify.log.error('dependency', mod.red, 'IS NOT registered as a dependency')
+        verify.log.error('dependency', 'not registered', mod.red)
       }
     })
     
@@ -43,11 +45,11 @@ verify.processForDir(cwd, {
     var keys = Object.keys(relativeModules)
     keys.forEach(function(key) {
       if (!verify.fileWithNameExists(key)) {
-        console.log(key.red, 'does not exist')
-        console.log('It is referenced from the following files:')
+        verify.log.error('dependency', 'not registered    ', key.red)
+        verify.log.error('dependency', 'It is referenced from the following files:')
         var refs = relativeModules[key]
         refs.forEach(function(r, index) {
-          console.log(' - ', index, ' ', r)
+          verify.log.error('dependency', ' - ', index, ' ', r)
         })
       }
     })
