@@ -1,10 +1,17 @@
 #!/usr/bin/env node
-var cwd    = process.cwd()
-  , fs     = require('fs')
-  , verify = require('../verify')
-  , path   = require('path')
+var cwd     = process.cwd()
+  , fs      = require('fs')
+  , verify  = require('../verify')
+  , path    = require('path')
+  , program = require('commander')
+  , pkg     = require('../package')
 
-verify.log.level = 'verbose'
+program
+  .version(pkg.version)
+  .option('-v, --verbose', 'Increase verbosity')
+  .parse(process.argv)
+
+if (program.verbose) verify.log.level = 'verbose'
 
 verify.processForDir(cwd, {
     directoryFilter: ['!.git', '!components', 
