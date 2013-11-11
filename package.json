@@ -1,6 +1,6 @@
 {
   "name": "modverify",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Verifies that all modules that are used in the given directory are actually registered in the package's dependencies",
   "main": "verify.js",
   "bin": {
