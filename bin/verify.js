@@ -25,6 +25,7 @@ verify.processForDir(cwd, {
     var pkg = require(path.join(cwd, 'package.json'))
       , deps = pkg.dependencies
       , devDeps = pkg.devDependencies || {}
+      , optDeps = pkg.optionalDependencies || {}
       , modules = results.modules
       , relativeModules = results.relativeModules
     verify.log.info('processing', 'Checking dependencies')
