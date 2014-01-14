@@ -14,7 +14,7 @@ program
 if (program.verbose) verify.log.level = 'verbose'
 
 verify.processForDir(cwd, {
-    directoryFilter: ['!.git', '!components', 
+    directoryFilter: ['!.git', '!components',
       '!bower_components', '!node_modules']
   , fileFilter: ['*.js']
 }, function(err, results) {
@@ -29,7 +29,8 @@ verify.processForDir(cwd, {
       , modules = results.modules
       , relativeModules = results.relativeModules
     verify.log.info('Checking dependencies')
-    modules.forEach(function(mod) {
+    var keys = Object.keys(modules)
+    keys.forEach(function(mod) {
       if (deps.hasOwnProperty(mod)) {
         verify.log.info('dependency', 'registered    ', mod.cyan)
       } else if (devDeps.hasOwnProperty(mod)) {
@@ -38,9 +39,14 @@ verify.processForDir(cwd, {
         verify.log.info('dependency', 'registered    ', mod.grey)
       } else {
         verify.log.error('dependency', 'not registered', mod.red)
+        verify.log.error('dependency', 'It is referenced from the following files:')
+        var refs = modules[mod]
+        refs.forEach(function(r, idx) {
+          verify.log.error('dependency', ' - ', idx, ' ', r)
+        })
       }
     })
-    
+
     verify.log.info('Checking relative dependencies')
     var keys = Object.keys(relativeModules)
     keys.forEach(function(key) {
