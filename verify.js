@@ -4,7 +4,6 @@ var fs          = require('fs')
   , colors      = require('colors')
   , regex       = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
   , regex2      = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
-  , _           = require('underscore')
   , async       = require('async')
   , path        = require('path')
   , verify      = exports
@@ -37,7 +36,7 @@ defaultModules = [
   , 'zlib'
 ]
 
-nodeModules = []
+nodeModules = {}
 relativeModules = {}
 
 verify.log = require('npmlog')
@@ -60,18 +59,21 @@ verify.processFile = function(f, cb) {
         commentStart.character = line.indexOf('/*')
         commentStart.line = idx
       }
-      
+
       if (~line.indexOf('*/')) {
         withinComment = false
         commentStart = {};
       }
-      
+
       if (matches = line.match(regex)) {
         var req = matches[3]
         if (withinComment) {
           return
         }
-        nodeModules.push(req)
+        if (!nodeModules.hasOwnProperty(req)) {
+          nodeModules[req] = []
+        }
+        nodeModules[req].push(f)
       }
       if (matches2 = line.match(regex2)) {
         var r = matches2[3]
@@ -94,7 +96,7 @@ verify.readFiles = function(opts, cb) {
   if ('function' === typeof opts) {
     cb = opts
     opts = {
-        directoryFilter: ['!.git', '!node_modules', 
+        directoryFilter: ['!.git', '!node_modules',
           '!components', '!bower_components']
       , fileFilter: ['*.js']
     };
@@ -112,13 +114,16 @@ verify.readFiles = function(opts, cb) {
           self.log.error('Error processing files: ', err)
           return cb && cb(err)
         } else {
-          nodeModules = _.difference(nodeModules, defaultModules)
-          nodeModules = _.unique(nodeModules)
+          defaultModules.forEach(function(m) {
+            if (nodeModules.hasOwnProperty(m)) {
+              delete nodeModules[m]
+            }
+          })
           return cb && cb(null, nodeModules, relativeModules)
         }
       })
     }
-  })  
+  })
 }
 
 verify.fileWithNameExists = function(fp) {
@@ -127,16 +132,16 @@ verify.fileWithNameExists = function(fp) {
   }
   var f = fp+'.js'
   if (fs.existsSync(f)) return true
-  
+
   f = fp+'.json'
   if (fs.existsSync(f)) return true
-  
+
   f = path.join(fp, 'index.js')
   if (fs.existsSync(f)) return true
-  
+
   f = path.join(fp, 'lib', 'index.js')
   if (fs.existsSync(f)) return true
-  
+
   return false
 }
 
@@ -146,7 +151,7 @@ verify.processForDir = function(dir, opts, cb) {
   if ('function' === typeof opts) {
     cb = opts
     opts = {
-        directoryFilter: ['!.git', '!node_modules', 
+        directoryFilter: ['!.git', '!node_modules',
           '!components', '!bower_components']
       , fileFilter: ['*.js']
     };
@@ -155,7 +160,7 @@ verify.processForDir = function(dir, opts, cb) {
     opts.fileFilter = ['*.js']
   }
   if (!opts.directoryFilter) {
-    opts.directoryFilter = ['!.git', '!node_modules', 
+    opts.directoryFilter = ['!.git', '!node_modules',
       '!components', '!bower_components']
   }
   fs.exists(path.join(dir, 'package.json'), function(e) {
@@ -172,7 +177,7 @@ verify.processForDir = function(dir, opts, cb) {
         output.modules = modules
         output.relativeModules = relativeModules
         return cb && cb(null, output)
-      })  
+      })
     }
   })
 }
