@@ -4,6 +4,7 @@ var fs          = require('fs')
   , colors      = require('colors')
   , regex       = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
   , regex2      = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
+  , _           = require('underscore')
   , async       = require('async')
   , path        = require('path')
   , verify      = exports
@@ -36,7 +37,7 @@ defaultModules = [
   , 'zlib'
 ]
 
-nodeModules = {}
+nodeModules = []
 relativeModules = {}
 
 verify.log = require('npmlog')
@@ -70,10 +71,7 @@ verify.processFile = function(f, cb) {
         if (withinComment) {
           return
         }
-        if (!nodeModules.hasOwnProperty(req)) {
-          nodeModules[req] = []
-        }
-        nodeModules[req].push(f)
+        nodeModules.push(req)
       }
       if (matches2 = line.match(regex2)) {
         var r = matches2[3]
@@ -114,11 +112,8 @@ verify.readFiles = function(opts, cb) {
           self.log.error('Error processing files: ', err)
           return cb && cb(err)
         } else {
-          defaultModules.forEach(function(m) {
-            if (nodeModules.hasOwnProperty(m)) {
-              delete nodeModules[m]
-            }
-          })
+          nodeModules = _.difference(nodeModules, defaultModules)
+          nodeModules = _.unique(nodeModules)
           return cb && cb(null, nodeModules, relativeModules)
         }
       })

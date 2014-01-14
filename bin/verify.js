@@ -38,8 +38,7 @@ verify.processForDir(cwd, {
       , modules = results.modules
       , relativeModules = results.relativeModules
     verify.log.info('Checking dependencies')
-    var keys = Object.keys(modules)
-    keys.forEach(function(mod) {
+    modules.forEach(function(mod) {
       if (deps.hasOwnProperty(mod)) {
         verify.log.info('dependency', 'registered    ', mod.cyan)
       } else if (devDeps.hasOwnProperty(mod)) {
@@ -48,11 +47,6 @@ verify.processForDir(cwd, {
         verify.log.info('dependency', 'registered    ', mod.grey)
       } else {
         verify.log.error('dependency', 'not registered', mod.red)
-        verify.log.error('dependency', 'It is referenced from the following files:')
-        var refs = modules[mod]
-        refs.forEach(function(r, idx) {
-          verify.log.error('dependency', ' - ', idx, ' ', r)
-        })
       }
     })
 
