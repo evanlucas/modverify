@@ -3,15 +3,24 @@ var cwd     = process.cwd()
   , fs      = require('fs')
   , verify  = require('../verify')
   , path    = require('path')
-  , program = require('commander')
   , pkg     = require('../package')
+  , nopt    = require('nopt')
+  , knownOpts = { loglevel: ['silly', 'verbose', 'info', 'warn', 'error', 'silent']
+                , version: Boolean
+                }
+  , shortHand = { verbose: ['--loglevel', 'verbose']
+                , silly: ['--loglevel', 'silly']
+                , quiet: ['--loglevel', 'silent']
+                , v: ['--version']
+                }
+  , parsed = nopt(knownOpts, shortHand)
 
-program
-  .version(pkg.version)
-  .option('-v, --verbose', 'Increase verbosity')
-  .parse(process.argv)
+if (parsed.loglevel) verify.log.level = parsed.loglevel
 
-if (program.verbose) verify.log.level = 'verbose'
+if (parsed.version) {
+  console.log('modverify', 'v'+pkg.version)
+  process.exit()
+}
 
 verify.processForDir(cwd, {
     directoryFilter: ['!.git', '!components',
@@ -23,7 +32,7 @@ verify.processForDir(cwd, {
     process.exit(1)
   } else {
     var pkg = require(path.join(cwd, 'package.json'))
-      , deps = pkg.dependencies
+      , deps = pkg.dependencies || {}
       , devDeps = pkg.devDependencies || {}
       , optDeps = pkg.optionalDependencies || {}
       , modules = results.modules
