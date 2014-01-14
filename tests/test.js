@@ -1,5 +1,4 @@
-var should = require('should')
-
+var assert = require('assert')
 describe('modverify', function() {
   describe('fileWithNameExists', function() {
     var dir = __dirname
@@ -11,14 +10,14 @@ describe('modverify', function() {
       var fn = path.join(dir, 'testfiles', file)
       var res = verify.fileWithNameExists(fn)
       it('Should exist', function() {
-        should.equal(res, true)
+        assert.equal(res, true)
       })
     })
     files2.forEach(function(file) {
       var fn = path.join(dir, 'testfiles', file)
       var res = verify.fileWithNameExists(fn)
       it('Should not exist', function() {
-        should.equal(res, false)
+        assert.equal(res, false)
       })
     })
   })
@@ -28,9 +27,9 @@ describe('modverify', function() {
       , verify = require('../verify')
     it('Should not throw an error', function(done) {
       verify.processForDir(dir, function(err, res) {
-        should.ifError(err)
-        res.should.have.property('modules')
-        res.should.have.property('relativeModules')
+        assert.ifError(err)
+        assert.equal(res.hasOwnProperty('modules'), true)
+        assert.equal(res.hasOwnProperty('relativeModules'), true)
         done()
       })
     })
