@@ -28,7 +28,12 @@ describe('modverify', function() {
     it('Should not throw an error', function(done) {
       verify.processForDir(dir, function(err, res) {
         assert.ifError(err)
+        var modules = ['grunt-cafe-mocha', 'readdirp', 'colors',
+          'underscore', 'async', 'npmlog', 'nopt']
         assert.equal(res.hasOwnProperty('modules'), true)
+        modules.forEach(function(mod) {
+          assert.equal(true, !!~res.modules.indexOf(mod))
+        })
         assert.equal(res.hasOwnProperty('relativeModules'), true)
         done()
       })
