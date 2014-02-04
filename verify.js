@@ -4,6 +4,7 @@ var fs          = require('fs')
   , colors      = require('colors')
   , regex       = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
   , regex2      = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
+  , regex3      = /(.*)grunt\.loadNpmTasks\(([\'\"])([^\'\"]+)([\'\"])(.*)/
   , _           = require('underscore')
   , async       = require('async')
   , path        = require('path')
@@ -81,6 +82,11 @@ verify.processFile = function(f, cb) {
           relativeModules[p] = []
         }
         relativeModules[p].push(f)
+      }
+
+      if (matches3 = line.match(regex3)) {
+        var r = matches3[3]
+        nodeModules.push(r)
       }
     })
   })
