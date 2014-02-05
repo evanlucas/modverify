@@ -33,11 +33,37 @@ if (parsed.version) {
   process.exit()
 }
 
-verify.processForDir(cwd, {
-    directoryFilter: ['!.git', '!components',
-      '!bower_components', '!node_modules']
-  , fileFilter: ['*.js']
-}, function(err, results) {
+if (parsed.help) {
+  return help()
+}
+
+var opts = {
+  directoryFilter: ['!.git', '!components', '!bower_components', '!node_modules'],
+  fileFilter: ['*.js'],
+  excludes: []
+}
+
+opts.root = parsed.argv.remain.length
+  ? path.resolve(cwd, parsed.argv.remain[0])
+  : cwd
+
+if (parsed.directory) {
+  opts.directoryFilter = parsed.directory
+}
+
+if (parsed.file) {
+  opts.fileFilter = parsed.file
+}
+
+if (parsed.exclude) {
+  opts.excludes = parsed.exclude.map(function(f) {
+    return path.resolve(opts.root, f)
+  })
+}
+
+opts.package = parsed.package || path.join(opts.root, 'package.json')
+
+verify.processForDir(opts, function(err, results) {
   if (err) {
     verify.log.error('processing', 'Error scanning files:', err)
     process.exit(1)
