@@ -7,11 +7,22 @@ var cwd     = process.cwd()
   , nopt    = require('nopt')
   , knownOpts = { loglevel: ['silly', 'verbose', 'info', 'warn', 'error', 'silent']
                 , version: Boolean
+                , help: Boolean
+                , directory: Array
+                , file: Array
+                , exclude: Array
+                , package: path
                 }
   , shortHand = { verbose: ['--loglevel', 'verbose']
                 , silly: ['--loglevel', 'silly']
                 , quiet: ['--loglevel', 'silent']
                 , v: ['--version']
+                , h: ['--help']
+                , H: ['--help']
+                , f: ['--file']
+                , d: ['--directory']
+                , e: ['--exclude']
+                , p: ['--package']
                 }
   , parsed = nopt(knownOpts, shortHand)
 
@@ -64,3 +75,19 @@ verify.processForDir(cwd, {
     })
   }
 })
+
+function help() {
+  console.log()
+  console.log(' Usage: modverify [options] [top directory]')
+  console.log()
+  console.log(' Options:')
+  console.log()
+  console.log('   -h, --help', '              ', 'show help and usage')
+  console.log('   -v, --version', '           ', 'show version')
+  console.log('   -f, --file <filter>', '     ', 'specify file filter')
+  console.log('   -d, --directory <filter>', '', 'specify directory filter')
+  console.log('   -e, --exclude <file>', '    ', 'exclude the given file(s)')
+  console.log('   -p, --package <file>', '    ', 'specify package.json')
+  console.log()
+  process.exit()
+}
