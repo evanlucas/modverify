@@ -69,9 +69,7 @@ verify.processFile = function(f, cb) {
 
       if (matches = line.match(regex)) {
         var req = matches[3]
-        if (withinComment) {
-          return
-        }
+        if (withinComment) return
         nodeModules.push(req)
       }
       if (matches2 = line.match(regex2)) {
@@ -86,6 +84,7 @@ verify.processFile = function(f, cb) {
 
       if (matches3 = line.match(regex3)) {
         var r = matches3[3]
+        if (withinComment) return
         nodeModules.push(r)
       }
     })
