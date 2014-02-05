@@ -46,6 +46,11 @@ verify.log.heading = 'modverify'
 
 verify.processFile = function(f, cb) {
   f = f.fullPath
+  var opts = verify.opts
+  if (opts.excludes && ~opts.excludes.indexOf(f)) {
+    verify.log.verbose('exclude', f)
+    return cb()
+  }
   var e = fs.createReadStream(f)
   var withinComment = false
     , commentStart = {}
@@ -94,16 +99,9 @@ verify.processFile = function(f, cb) {
   })
 }
 
-verify.readFiles = function(opts, cb) {
+verify.readFiles = function(cb) {
   var self = this
-  if ('function' === typeof opts) {
-    cb = opts
-    opts = {
-        directoryFilter: ['!.git', '!node_modules',
-          '!components', '!bower_components']
-      , fileFilter: ['*.js']
-    };
-  }
+  var opts = verify.opts
   readdirp(opts, function(err, res) {
     if (err) {
       err.forEach(function(e) {
@@ -146,7 +144,7 @@ verify.fileWithNameExists = function(fp) {
 }
 
 
-verify.processForDir = function(dir, opts, cb) {
+verify.processForDir = function(opts, cb) {
   var self = this
   if ('function' === typeof opts) {
     cb = opts
@@ -154,6 +152,7 @@ verify.processForDir = function(dir, opts, cb) {
         directoryFilter: ['!.git', '!node_modules',
           '!components', '!bower_components']
       , fileFilter: ['*.js']
+      , excludes: []
     };
   }
   if (!opts.fileFilter) {
@@ -163,14 +162,18 @@ verify.processForDir = function(dir, opts, cb) {
     opts.directoryFilter = ['!.git', '!node_modules',
       '!components', '!bower_components']
   }
-  fs.exists(path.join(dir, 'package.json'), function(e) {
+  if (!opts.excludes) opts.excludes = []
+  opts.root = opts.root || cwd
+  opts.package = opts.package || path.join(opts.root, 'package.json')
+  verify.opts = opts
+  fs.exists(opts.package, function(e) {
     if (!e) {
       self.log.error('Unable to find package.json')
       process.exit(1)
     } else {
-      self.readFiles(opts, function(err, modules, relativeModules) {
+      self.readFiles(function(err, modules, relativeModules) {
         if (err) return cb && cb(err)
-        var pkg = require(path.join(cwd, 'package.json'))
+        var pkg = require(opts.package)
         var deps = pkg.dependencies
           , devDeps = pkg.devDependencies || {}
         var output = {};
