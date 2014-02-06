@@ -13,6 +13,7 @@ var fs          = require('fs')
 defaultModules = [
     'child_process'
   , 'assert'
+  , 'buffer'
   , 'cluster'
   , 'crypto'
   , 'dns'
