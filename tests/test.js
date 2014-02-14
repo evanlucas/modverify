@@ -26,10 +26,10 @@ describe('modverify', function() {
     var dir = process.cwd()
       , verify = require('../verify')
     it('Should not throw an error', function(done) {
-      verify.processForDir(dir, function(err, res) {
+      verify.processForDir({root: dir}, function(err, res) {
         assert.ifError(err)
-        var modules = ['grunt-cafe-mocha', 'readdirp', 'colors',
-          'underscore', 'async', 'npmlog', 'nopt']
+        var modules = ['readdirp', 'colors', 'npmlog', 'nopt',
+          'detective', 'slide']
         assert.equal(res.hasOwnProperty('modules'), true)
         modules.forEach(function(mod) {
           assert.equal(true, !!~res.modules.indexOf(mod))
