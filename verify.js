@@ -59,14 +59,6 @@ verify.addDep = function(dep, file) {
   }
 }
 
-function isRequire(node) {
-  var c = node.callee
-  return c
-    && node.type === 'CallExpression'
-    && c.type === 'Identifier'
-    && c.name === 'require'
-}
-
 verify.processFile = function(f, cb) {
   f = f.fullPath
   verify.log.verbose('processFile', 'checking', '`'+f+'`')
