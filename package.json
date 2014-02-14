@@ -14,6 +14,7 @@
     "nopt": "~2.1.2",
     "underscore": "~1.5.2"
     "slide": "~1.1.5",
+    "detective": "~2.4.0"
   },
   "devDependencies": {
     "grunt-cafe-mocha": "~0.1.8",
