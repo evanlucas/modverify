@@ -50,10 +50,12 @@ verify.addDep = function(dep, file) {
       if (!relativeModules.hasOwnProperty(p))
         relativeModules[p] = []
 
-      relativeModules[p].push(dep)
+      if (~relativeModules[p].indexOf(file)) return
+      relativeModules[p].push(file)
     } else {
       // module
       if (~defaultModules.indexOf(dep)) return
+      if (~nodeModules.indexOf(dep)) return
       nodeModules.push(dep)
     }
   }
