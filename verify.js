@@ -90,15 +90,14 @@ verify.readFiles = function(cb) {
       return cb && cb(err)
     } else {
       var processFile = self.processFile
-      async.each(res.files, processFile, function(err) {
+      asyncMap(res.files, function(file, cb) {
+        self.processFile(file, cb)
+      }, function(err) {
         if (err) {
-          self.log.error('Error processing files: ', err)
+          self.log.error('Error processing files:', err)
           return cb && cb(err)
-        } else {
-          nodeModules = _.difference(nodeModules, defaultModules)
-          nodeModules = _.unique(nodeModules)
-          return cb && cb(null, nodeModules, relativeModules)
         }
+        return cb && cb(null, nodeModules, relativeModules)
       })
     }
   })
