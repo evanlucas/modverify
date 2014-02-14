@@ -2,6 +2,7 @@ var fs          = require('fs')
   , cwd         = process.cwd()
   , readdirp    = require('readdirp')
   , colors      = require('colors')
+  , detective   = require('detective')
   , regex       = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
   , regex2      = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
   , regex3      = /(.*)grunt\.loadNpmTasks\(([\'\"])([^\'\"]+)([\'\"])(.*)/
@@ -9,6 +10,13 @@ var fs          = require('fs')
   , async       = require('async')
   , path        = require('path')
   , verify      = exports
+
+var detectiveOpts = {
+  parse: {
+    loc: true
+  },
+  nodes: false
+}
 
 defaultModules = [
     'child_process'
@@ -45,57 +53,47 @@ relativeModules = {}
 verify.log = require('npmlog')
 verify.log.heading = 'modverify'
 
+verify.addDep = function(dep, file) {
+  if (dep && dep.length) {
+    if (dep[0] === '.' || dep[0] === '/') {
+      // relative module
+      var p = path.join(path.dirname(file), dep)
+      if (!relativeModules.hasOwnProperty(p))
+        relativeModules[p] = []
+
+      relativeModules[p].push(dep)
+    } else {
+      // module
+      if (~defaultModules.indexOf(dep)) return
+      nodeModules.push(dep)
+    }
+  }
+}
+
+function isRequire(node) {
+  var c = node.callee
+  return c
+    && node.type === 'CallExpression'
+    && c.type === 'Identifier'
+    && c.name === 'require'
+}
+
 verify.processFile = function(f, cb) {
   f = f.fullPath
+  verify.log.verbose('processFile', 'checking', '`'+f+'`')
   var opts = verify.opts
   if (opts.excludes && ~opts.excludes.indexOf(f)) {
     verify.log.verbose('exclude', f)
     return cb()
   }
-  var e = fs.createReadStream(f)
-  var withinComment = false
-    , commentStart = {}
-  verify.log.verbose('processFile', 'checking', '`'+f+'`')
-  e.on('data', function(chunk) {
-    chunk = chunk.toString()
-    var lines = chunk.split("\n")
-    lines.forEach(function(line, idx) {
-      if (line === "" || !line) return
-      if (~line.substr(0, 10).indexOf('//')) return
-      if (~line.indexOf('/*')) {
-        withinComment = true
-        commentStart.character = line.indexOf('/*')
-        commentStart.line = idx
-      }
-
-      if (~line.indexOf('*/')) {
-        withinComment = false
-        commentStart = {};
-      }
-
-      if (matches = line.match(regex)) {
-        var req = matches[3]
-        if (withinComment) return
-        nodeModules.push(req)
-      }
-      if (matches2 = line.match(regex2)) {
-        var r = matches2[3]
-        if (r.substr(0, 1) !== '.') return
-        var p = path.join(path.dirname(f), r)
-        if (!relativeModules.hasOwnProperty(p)) {
-          relativeModules[p] = []
-        }
-        relativeModules[p].push(f)
-      }
-
-      if (matches3 = line.match(regex3)) {
-        var r = matches3[3]
-        if (withinComment) return
-        nodeModules.push(r)
-      }
+  fs.readFile(f, 'utf8', function(err, contents) {
+    if (err) return cb && cb(err)
+    var requires = detective.find(contents, detectiveOpts)
+    //verify.log.info('requires', f, requires.strings)
+    //verify.log.info('nodes', f, requires.nodes)
+    requires.strings.forEach(function(m) {
+      verify.addDep(m, f)
     })
-  })
-  e.on('end', function() {
     return cb && cb()
   })
 }
