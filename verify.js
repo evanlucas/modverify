@@ -7,13 +7,6 @@ var fs          = require('fs')
   , path        = require('path')
   , verify      = exports
 
-var detectiveOpts = {
-  parse: {
-    loc: true
-  },
-  nodes: false
-}
-
 defaultModules = [
     'child_process'
   , 'assert'
@@ -84,9 +77,7 @@ verify.processFile = function(f, cb) {
   }
   fs.readFile(f, 'utf8', function(err, contents) {
     if (err) return cb && cb(err)
-    var requires = detective.find(contents, detectiveOpts)
-    //verify.log.info('requires', f, requires.strings)
-    //verify.log.info('nodes', f, requires.nodes)
+    var requires = detective.find(contents)
     requires.strings.forEach(function(m) {
       verify.addDep(m, f)
     })
