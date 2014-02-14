@@ -154,8 +154,6 @@ verify.processForDir = function(opts, cb) {
       self.readFiles(function(err, modules, relativeModules) {
         if (err) return cb && cb(err)
         var pkg = require(opts.package)
-        var deps = pkg.dependencies
-          , devDeps = pkg.devDependencies || {}
         var output = {};
         output.modules = modules
         output.relativeModules = relativeModules
