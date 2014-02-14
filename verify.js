@@ -3,11 +3,7 @@ var fs          = require('fs')
   , readdirp    = require('readdirp')
   , colors      = require('colors')
   , detective   = require('detective')
-  , regex       = /(.*)require\(([\'\"])([^\.\'\"]+)([\'\"])(.*)/
-  , regex2      = /(.*)require\(([\'\"])([^\'\"]+)([\'\"])(.*)/
-  , regex3      = /(.*)grunt\.loadNpmTasks\(([\'\"])([^\'\"]+)([\'\"])(.*)/
-  , _           = require('underscore')
-  , async       = require('async')
+  , asyncMap    = require('slide').asyncMap
   , path        = require('path')
   , verify      = exports
 
