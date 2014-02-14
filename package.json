@@ -12,7 +12,6 @@
     "npmlog": "0.0.6",
     "colors": "~0.6.2",
     "nopt": "~2.1.2",
-    "underscore": "~1.5.2"
     "slide": "~1.1.5",
     "detective": "~2.4.0"
   },
